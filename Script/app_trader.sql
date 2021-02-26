@@ -9,13 +9,21 @@ ORDER BY price DESC
 */
 
 
-SELECT name, rating1,
-	ROUND((-10000 * price1) + (5000 * (rating1/.5+1)) + (-1000*(rating1/.5+1)),2) AS Net_income_by_rating
+/*
+SELECT name, 
+	ROUND((-10000 * price1) + (5000 * (rating1/.125)) + (-1000*(rating1/.125)),2) AS net_income_by_rating,
+	ROUND((-10000 * price2) + (5000 * (rating2/.125)) + (-1000*(rating2/.125)),2) AS net_income_by_rating2
 FROM
-	(SELECT DISTINCT(UPPER(a.name)) AS name, CAST(a.price AS NUMERIC(10,2))AS price1, a.rating AS rating1, a.content_rating AS c_rating1, a.primary_genre AS genre1, 
-									p.price AS price2, p.rating AS rating2, p.content_rating AS c_rating2, p.genres AS genre2
+	(SELECT DISTINCT(UPPER(a.name)) AS name, CAST(a.price AS NUMERIC(10,2))AS price1, a.rating AS rating1, a.content_rating  AS c_rating1, a.primary_genre AS genre1, 
+											CAST(REPLACE(p.price,'$','') AS NUMERIC(10,2)) AS price2, p.rating AS rating2, p.content_rating AS c_rating2, p.genres AS genre2																
 	FROM app_store_apps AS a
 	INNER JOIN play_store_apps AS p
 	ON UPPER(a.name) = UPPER(p.name)) AS combo
-ORDER BY net_income_by_rating DESC
+WHERE c_rating1 = '4+'
+ORDER BY net_income_by_rating DESC, net_income_by_rating2  DESC 
+
+*/
+
+
+
 
