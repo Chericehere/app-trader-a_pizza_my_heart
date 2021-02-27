@@ -9,6 +9,7 @@ ORDER BY price DESC
 */
 
 
+
 /*
 SELECT name, 
 	ROUND((-10000 * price1) + (5000 * (rating1/.125)) + (-1000*(rating1/.125)),2) AS net_income_by_rating,
