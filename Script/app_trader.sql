@@ -1,29 +1,42 @@
-/*SELECT name, price
-FROM
-	(SELECT UPPER(name), name, price, CAST(review_count AS int), rating, primary_genre, content_rating
-	FROM app_store_apps
-	UNION
-	SELECT UPPER(name), name, CAST(price AS money), review_count, rating, genres, content_rating
-	FROM play_store_apps) as inter
-ORDER BY price DESC
+/* By calculating which apps would make the greatest net-income we can view their common traits. Apps with these traits 
+	TRAIT		APPLE		GOOGLE
+	price		free		free
+	rating		>4.5		>5.0
+	c_rating	+4			Everyone
+	genre		Games		-
+	in_count	-			Broke ties
 */
 
-
-
-/*
-SELECT name, 
-	ROUND((-10000 * price1) + (5000 * (rating1/.125)) + (-1000*(rating1/.125)),2) AS net_income_by_rating,
-	ROUND((-10000 * price2) + (5000 * (rating2/.125)) + (-1000*(rating2/.125)),2) AS net_income_by_rating2
+SELECT 
+		names_of_apps, apple_price, google_price, apple_rating, google_rating, apple_content_rating, google_content_rating, apple_genre, google_genre, google_install_count,
+		ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
+			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * (apple_rating/.125)) + (-1000*(apple_rating/.125)),2) AS net_income_by_apple_rating,
+		ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
+			  				 WHEN google_price >1 THEN google_price END )+ (5000 * (google_rating/.125)) + (-1000*(google_rating/.125)),2) AS net_income_by_google_rating,
+		(ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
+			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * (apple_rating/.125)) + (-1000*(apple_rating/.125)),2)
+	  		+ ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
+								   WHEN google_price >1 THEN google_price END )+ (5000 * (google_rating/.125)) + (-1000*(google_rating/.125)),2))/2  AS avg_net_income	 
 FROM
-	(SELECT DISTINCT(UPPER(a.name)) AS name, CAST(a.price AS NUMERIC(10,2))AS price1, a.rating AS rating1, a.content_rating  AS c_rating1, a.primary_genre AS genre1, 
-											CAST(REPLACE(p.price,'$','') AS NUMERIC(10,2)) AS price2, p.rating AS rating2, p.content_rating AS c_rating2, p.genres AS genre2																
+	(SELECT 
+	 		DISTINCT(UPPER(a.name)) AS names_of_apps, 
+	 		CAST(a.price AS NUMERIC(10,2))AS apple_price, CAST(REPLACE(p.price,'$','') AS NUMERIC(10,2)) AS google_price,
+	 		a.rating AS apple_rating, ceiling(cast(p.rating as NUMERIC)/.5)* .5 as google_rating,
+	 		a.content_rating  AS apple_content_rating, p.content_rating AS google_content_rating,
+	 		a.primary_genre AS apple_genre, p.genres AS google_genre,
+	 										CAST (REPLACE(REPLACE(p.install_count,'+',''),',','')AS INT) AS google_install_count
 	FROM app_store_apps AS a
 	INNER JOIN play_store_apps AS p
 	ON UPPER(a.name) = UPPER(p.name)) AS combo
-WHERE c_rating1 = '4+'
-ORDER BY net_income_by_rating DESC, net_income_by_rating2  DESC 
+WHERE apple_price = 0 AND google_price = 0
+ORDER BY avg_net_income DESC, google_install_count DESC, names_of_apps 
 
-*/
+
+
+
+
+
+
 
 
 
