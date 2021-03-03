@@ -5,18 +5,22 @@
 	c_rating	+4			Everyone
 	genre		Games		-
 	in_count	-			Broke ties
+	
+	Cost -- (apple_rating/.125) -- explanation 
+		rating / (.5 star + 1 free year /12) 
+			 
 */
 
 SELECT 
 		names_of_apps, apple_price, google_price, apple_rating, google_rating, apple_content_rating, google_content_rating, apple_genre, google_genre, google_install_count,
 		ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
-			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * (apple_rating/.125)) + (-1000*(apple_rating/.125)),2) AS net_income_by_apple_rating,
+			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * ((apple_rating/.5+1))*12) + (-1000*((apple_rating/.5+1))*12),2) AS net_income_by_apple_rating,
 		ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
-			  				 WHEN google_price >1 THEN google_price END )+ (5000 * (google_rating/.125)) + (-1000*(google_rating/.125)),2) AS net_income_by_google_rating,
-		(ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
-			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * (apple_rating/.125)) + (-1000*(apple_rating/.125)),2)
-	  		+ ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
-								   WHEN google_price >1 THEN google_price END )+ (5000 * (google_rating/.125)) + (-1000*(google_rating/.125)),2))/2  AS avg_net_income	 
+			  				 WHEN google_price >1 THEN google_price END )+ (5000 * ((google_rating/.5+1))*12) + (-1000*((google_rating/.5+1))*12),2) AS net_income_by_google_rating,
+		ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
+			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * ((apple_rating/.5+1))*12) + (-1000*((apple_rating/.5+1))*12),2) +
+		ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
+			  				 WHEN google_price >1 THEN google_price END )+ (5000 * ((google_rating/.5+1))*12) + (-1000*((google_rating/.5+1))*12),2)	AS avg_income				 
 FROM
 	(SELECT 
 	 		DISTINCT(UPPER(a.name)) AS names_of_apps, 
@@ -29,7 +33,7 @@ FROM
 	INNER JOIN play_store_apps AS p
 	ON UPPER(a.name) = UPPER(p.name)) AS combo
 WHERE apple_price = 0 AND google_price = 0
-ORDER BY avg_net_income DESC, google_install_count DESC, names_of_apps 
+ORDER BY avg_income DESC, google_install_count DESC, names_of_apps 
 
 
 
