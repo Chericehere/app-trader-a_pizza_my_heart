@@ -14,10 +14,10 @@ SELECT
 			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * ((apple_rating/.5+1))*12) + (-1000*((apple_rating/.5+1))*12),2) AS net_income_by_apple_rating,
 		ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
 			  				 WHEN google_price >1 THEN google_price END )+ (5000 * ((google_rating/.5+1))*12) + (-1000*((google_rating/.5+1))*12),2) AS net_income_by_google_rating,
-		ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
-			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * ((apple_rating/.5+1))*12) + (-1000*((apple_rating/.5+1))*12),2) +
-		ROUND((-10000 * CASE WHEN google_price <=1 THEN 1
-			  				 WHEN google_price >1 THEN google_price END )+ (5000 * ((google_rating/.5+1))*12) + (-1000*((google_rating/.5+1))*12),2)	AS avg_income				 
+		(ROUND((-10000 * CASE WHEN apple_price <=1 THEN 1
+			  				 WHEN apple_price >1 THEN apple_price END )+ (5000 * ((apple_rating/.5+1))*12) + (-1000*((apple_rating/.5+1))*12) +
+			  (-10000 * CASE WHEN google_price <=1 THEN 1
+			  				 WHEN google_price >1 THEN google_price END )+ (5000 * ((google_rating/.5+1))*12) + (-1000*((google_rating/.5+1))*12),2))*.5 AS avg_income				 
 FROM
 	(SELECT 
 	 		DISTINCT(UPPER(a.name)) AS names_of_apps, 
