@@ -5,10 +5,7 @@
 	c_rating	+4			Everyone
 	genre		Games		-
 	in_count	-			Broke ties
-	
-	Cost -- (apple_rating/.125) -- explanation 
-		rating / (.5 star + 1 free year /12) 
-			 
+				 
 */
 
 SELECT 
