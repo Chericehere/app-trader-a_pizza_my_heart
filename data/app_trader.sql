@@ -129,3 +129,7 @@ FROM
 ORDER BY total_net_income DESC, names_of_apps) zzz
 group by names_of_apps
 order by 2 desc
+
+SELECT rating, primary_genre
+from app_store_apps
+ORDER BY rating
